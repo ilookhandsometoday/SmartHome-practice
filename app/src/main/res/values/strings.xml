@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">SmartHome</string>
     <string name="settings_button">Settings</string>
+    <string name="add_button">Add</string>
     <!-- Error messages -->
     <string name="error_fragment_message">An error occurred</string>
     <string name="dismiss_error">Dismiss</string>
