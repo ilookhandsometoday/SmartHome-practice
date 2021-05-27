@@ -4,6 +4,7 @@ import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 
@@ -26,22 +27,40 @@ import java.util.Locale;
 
 public class MainFragment extends Fragment{
     public static class DeviceTypes{
-        public static final int SOCKET = 1;
+        public static final Pair<Integer, String> SOCKET = 1;
         public static final int LIGHTBULB = 2;
         public static final int SMOKE_DETECTOR = 3;
     }
 
     private RecyclerView recyclerView;
+    private Button addButton;
     private ItemAdapter adapter;
+    private TextView deviceInfoText;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable  Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        this.deviceInfoText = view.findViewById(R.id.device_info_text);
+
+        this.addButton = view.findViewById(R.id.add_button);
+        this.addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addDevice();
+            }
+        });
+
         this.recyclerView = view.findViewById(R.id.devices);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         this.recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         this.adapter = new ItemAdapter();
+        this.adapter.setOnItemClick(new OnItemClick() {
+            @Override
+            public void onClick(DeviceItem data) {
+
+            }
+        });
         this.recyclerView.setAdapter(adapter);
 
         initData();
@@ -50,6 +69,20 @@ public class MainFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         return inflater.inflate(R.layout.main_fragment, null);
+    }
+
+    private void showDeviceInfo(DeviceItem deviceItem) {
+        switch(deviceItem.deviceType){
+
+        }
+    }
+
+    private void  addDevice(){
+        DeviceItem deviceItem = new DeviceItem();
+        deviceItem.deviceName = "Розетка3";
+        deviceItem.deviceType = "Розетка";
+        this.adapter.dataList.add(deviceItem);
+        this.adapter.notifyDataSetChanged();
     }
 
     private void initData(){
@@ -64,25 +97,7 @@ public class MainFragment extends Fragment{
         item.deviceName = "Детектор дыма 1";
         list.add(item);
 
-        item = new DeviceItem();
-        item.deviceType = "Датчик задымления";
-        item.deviceName = "Детектор дыма 1";
-        list.add(item);
-
-        item = new DeviceItem();
-        item.deviceType = "Датчик задымления";
-        item.deviceName = "Детектор дыма 1";
-        list.add(item);
-
-        item = new DeviceItem();
-        item.deviceType = "Датчик задымления";
-        item.deviceName = "Детектор дыма 1";
-        list.add(item);
-
         this.adapter.setDataList(list);
-    }
-
-    private void onDeviceCardClick(DeviceItem deviceItem) {
     }
 
     public final static class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
@@ -115,6 +130,10 @@ public class MainFragment extends Fragment{
                 this.dataList.addAll(dataList);
             }
             notifyDataSetChanged();
+        }
+
+        public void setOnItemClick(OnItemClick onItemClick){
+            this.onItemClick = onItemClick;
         }
 
         @NonNull
