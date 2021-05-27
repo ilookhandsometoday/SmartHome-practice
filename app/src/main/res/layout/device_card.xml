@@ -4,15 +4,15 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/device_card_root"
     android:layout_width="299dp"
-    android:layout_height="178dp">
+    android:layout_height="178dp"
+    android:focusable="true"
+    android:background="@color/white"
+    android:backgroundTint="@color/device_card">
 
     <LinearLayout
         android:id="@+id/card_layout"
         android:layout_width="299dp"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:backgroundTint="@color/device_card"
-        android:focusable="true"
         android:orientation="vertical">
 
         <TextView

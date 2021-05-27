@@ -39,6 +39,7 @@ public class MainFragment extends Fragment{
 
     private RecyclerView recyclerView;
     private Button addButton;
+    private Button removeButton;
     private ItemAdapter adapter;
 
 
@@ -53,6 +54,14 @@ public class MainFragment extends Fragment{
                 addDevice();
             }
         });
+
+        this.removeButton = view.findViewById(R.id.remove_button);
+        this.removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                removeDevice();
+            }
+            });
 
         this.recyclerView = view.findViewById(R.id.devices);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -77,6 +86,12 @@ public class MainFragment extends Fragment{
         this.adapter.notifyDataSetChanged();
     }
 
+    private void removeDevice(){
+        int index = this.adapter.dataList.size() - 1;
+        this.adapter.dataList.remove(index);
+        this.adapter.notifyDataSetChanged();
+    }
+
     private void initData(){
         ArrayList<DeviceItem> list = new ArrayList<>();
         DeviceItem item = new DeviceItem();
@@ -94,7 +109,7 @@ public class MainFragment extends Fragment{
         this.adapter.setDataList(list);
     }
 
-    public final static class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
+    public final static class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnFocusChangeListener {
         private ArrayList<DeviceItem> dataList = new ArrayList<>();
 
         public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -128,7 +143,7 @@ public class MainFragment extends Fragment{
             Context context = parent.getContext();
             LayoutInflater inflater = LayoutInflater.from(context);
             View contactView = inflater.inflate(R.layout.device_card, parent, false);
-            contactView.setOnClickListener(this);
+            contactView.setOnFocusChangeListener(this);
 
             LinearLayout linLayout = (LinearLayout)contactView.findViewById(R.id.card_layout);
             View miniature = null;
@@ -175,12 +190,14 @@ public class MainFragment extends Fragment{
         }
 
         @Override
-        public void onClick(View v){
-            ViewHolder vh = (ViewHolder)v.getTag();
-            int position = vh.getAdapterPosition();
-            DeviceItem item = this.dataList.get(position);
-            TextView deviceInfo = v.getRootView().findViewById(R.id.device_info_text);
-            deviceInfo.setText(item.deviceInfo);
+        public void onFocusChange(View v, boolean hasFocus) {
+            if(hasFocus){
+                ViewHolder vh = (ViewHolder)v.getTag();
+                int position = vh.getAdapterPosition();
+                DeviceItem item = this.dataList.get(position);
+                TextView deviceInfo = v.getRootView().findViewById(R.id.device_info_text);
+                deviceInfo.setText(item.deviceInfo);
+            }
         }
     }
 }
