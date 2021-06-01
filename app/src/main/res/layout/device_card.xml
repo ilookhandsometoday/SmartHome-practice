@@ -39,6 +39,7 @@
 
         </LinearLayout>
 
+        <!--Layout element used to expand cards on click-->
         <LinearLayout
             android:id="@+id/card_expansion"
             android:layout_width="match_parent"

@@ -69,6 +69,7 @@ public class MainFragment extends Fragment{
         return inflater.inflate(R.layout.main_fragment, null);
     }
 
+    //stub
     private void addDevice(){
         DeviceItem deviceItem = new DeviceItem();
         deviceItem.deviceType = DeviceTypes.SOCKET_STRING;
@@ -78,24 +79,28 @@ public class MainFragment extends Fragment{
         this.adapter.notifyDataSetChanged();
     }
 
+    //stub
     private void removeDevice(){
         int index = this.adapter.dataList.size() - 1;
         this.adapter.dataList.remove(index);
         this.adapter.notifyDataSetChanged();
     }
 
+    //stub
     private void initData(){
         ArrayList<DeviceItem> list = new ArrayList<>();
         DeviceItem item = new DeviceItem();
         item.deviceType = DeviceTypes.SOCKET_STRING;
         item.deviceName = "Розетка 1";
         item.deviceInfo = "Информация об устройстве " + item.deviceName;
+        item.logs = "Энергопотребление";
         list.add(item);
 
         item = new DeviceItem();
         item.deviceType = DeviceTypes.SMOKE_DETECTOR_STRING;
         item.deviceName = "Датчик задымления 1";
         item.deviceInfo = "Информация об устройстве " + item.deviceName;
+        item.logs = "14:20 - Задымление";
         list.add(item);
 
         item = new DeviceItem();
@@ -149,6 +154,7 @@ public class MainFragment extends Fragment{
             contactView.setOnFocusChangeListener(this);
             contactView.setOnClickListener(this);
 
+            //creating different layouts for different devices
             LinearLayout cardExpansion = contactView.findViewById(R.id.card_expansion);
             switch(viewType){
                 case (DeviceTypes.SOCKET_INT):
@@ -207,17 +213,28 @@ public class MainFragment extends Fragment{
             }
         }
 
+        //method to handle focus change
+        //(slightly inefficient, because everytime we refocus, text is reset, which is not always good)
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
             if(hasFocus){
                 ViewHolder vh = (ViewHolder)v.getTag();
                 int position = vh.getAdapterPosition();
                 DeviceItem item = this.dataList.get(position);
+
+                TextView deviceLogs = v.getRootView().findViewById(R.id.device_logs);
+                deviceLogs.setText("");
+
                 TextView deviceInfo = v.getRootView().findViewById(R.id.device_info_title);
+                if(item.logs != null) {
+                    deviceLogs.setText(item.logs);
+                }
+
                 deviceInfo.setText(item.deviceInfo);
             }
         }
 
+        //method handling onClick expansion of device cards
         @Override
         public void onClick(View v){
             LinearLayout expansion = v.findViewById(R.id.card_expansion);
@@ -230,6 +247,9 @@ public class MainFragment extends Fragment{
             }
         }
 
+        //method to handle toggle buttons on cards. Might need to relocate it somwhere, perhaps into
+        //a different class somehow
+        //basically also a stub
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             ViewHolder vh = (ViewHolder)((View)buttonView.getParent()).getTag();

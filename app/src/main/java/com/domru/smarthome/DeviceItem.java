@@ -5,5 +5,6 @@ public class DeviceItem {
     public String deviceName;
     public String deviceInfo;
     public boolean expanded = false;
+    public String state;
     public String logs;
 }
