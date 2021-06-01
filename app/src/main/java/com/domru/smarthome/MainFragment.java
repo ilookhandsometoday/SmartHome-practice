@@ -5,8 +5,11 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ToggleButton;
 import android.widget.TextView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import android.content.Context;
 
@@ -24,16 +27,7 @@ import java.util.ArrayList;
 
 
 public class MainFragment extends Fragment{
-    public static class DeviceTypes{
-        public static final String SOCKET_STRING = "Розетка";
-        public static final int SOCKET_INT = 1;
 
-        public static final String LIGHTBULB_STRING = "Лампочка";
-        public static final int LIGHTBULB_INT = 2;
-
-        public static final String SMOKE_DETECTOR_STRING = "Датчик задымления";
-        public static final int SMOKE_DETECTOR_INT = 3;
-    }
 
     private RecyclerView recyclerView;
     private Button addButton;
@@ -114,7 +108,7 @@ public class MainFragment extends Fragment{
     }
 
     public final static class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnFocusChangeListener,
-    View.OnClickListener{
+    View.OnClickListener, CompoundButton.OnCheckedChangeListener{
         private ArrayList<DeviceItem> dataList = new ArrayList<>();
 
         public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -128,6 +122,7 @@ public class MainFragment extends Fragment{
                 this.deviceName = itemView.findViewById(R.id.device_name);
                 this.cardExpansion = itemView.findViewById(R.id.card_expansion);
                 itemView.setTag(this);
+                this.cardExpansion.setTag(this);
             }
 
             public void bind(final DeviceItem data){
@@ -154,28 +149,19 @@ public class MainFragment extends Fragment{
             contactView.setOnFocusChangeListener(this);
             contactView.setOnClickListener(this);
 
-            LinearLayout cardLayout = contactView.findViewById(R.id.card_layout);
             LinearLayout cardExpansion = contactView.findViewById(R.id.card_expansion);
-            View miniature = null;
             switch(viewType){
                 case (DeviceTypes.SOCKET_INT):
-                    miniature = new TextView(context);
-                    ((TextView) miniature).setText("Работает");
-                    Button onOffButtonSocket = CardButton(context, R.string.socket_button);
+                    ToggleButton onOffButtonSocket = CardToggleButton(context, R.string.toggle_on, R.string.toggle_off);
                     cardExpansion.addView(onOffButtonSocket);
                     break;
                 case (DeviceTypes.SMOKE_DETECTOR_INT):
-                    miniature = new TextView(context);
-                    ((TextView) miniature).setText("ЗАДЫМЛЕНИЕ!");
                     break;
                 case (DeviceTypes.LIGHTBULB_INT):
-                    miniature = new TextView(context);
-                    ((TextView) miniature).setText("Горит");
-                    Button onOffButtonLight = CardButton(context, R.string.bulb_button);
+                    ToggleButton onOffButtonLight = CardToggleButton(context, R.string.toggle_on, R.string.toggle_off);
                     cardExpansion.addView(onOffButtonLight);
                     break;
             }
-            cardLayout.addView(miniature);
             return new ViewHolder(contactView);
         }
 
@@ -185,6 +171,16 @@ public class MainFragment extends Fragment{
             button.setFocusable(true);
             button.setNextFocusUpId(R.id.device_card_root);
             return button;
+        }
+
+        private ToggleButton CardToggleButton(Context context, int textOnId, int textOffId){
+            ToggleButton toggle = new ToggleButton(context);
+            toggle.setOnCheckedChangeListener(this);
+            toggle.setTextOff(context.getString(textOffId));
+            toggle.setTextOn(context.getString(textOnId));
+            toggle.setFocusable(true);
+            toggle.setNextFocusUpId(R.id.device_card_root);
+            return toggle;
         }
 
         @Override
@@ -224,11 +220,30 @@ public class MainFragment extends Fragment{
 
         @Override
         public void onClick(View v){
-            ViewHolder vh = (ViewHolder)v.getTag();
+            LinearLayout expansion = v.findViewById(R.id.card_expansion);
+            if(expansion.getChildCount() > 0){
+                ViewHolder vh = (ViewHolder)v.getTag();
+                int position = vh.getAdapterPosition();
+                DeviceItem item = this.dataList.get(position);
+                item.expanded = !item.expanded;
+                notifyItemChanged(position);
+            }
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            ViewHolder vh = (ViewHolder)((View)buttonView.getParent()).getTag();
             int position = vh.getAdapterPosition();
             DeviceItem item = this.dataList.get(position);
-            item.expanded = !item.expanded;
-            notifyItemChanged(position);
+            String text = "Устройство " + item.deviceName;
+            if(isChecked) {
+                text += " включено";
+            }
+            else{
+                text += " выключено";
+            }
+            Toast toast = Toast.makeText(buttonView.getContext(), text, Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
 }
