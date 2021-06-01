@@ -3,6 +3,8 @@
     <string name="settings_button">Settings</string>
     <string name="add_button">Add</string>
     <string name="remove_button">Remove</string>
+    <string name="socket_button">On/off</string>
+    <string name="bulb_button">On/off</string>
     <!-- Error messages -->
     <string name="error_fragment_message">An error occurred</string>
     <string name="dismiss_error">Dismiss</string>

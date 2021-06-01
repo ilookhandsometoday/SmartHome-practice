@@ -4,31 +4,49 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/device_card_root"
     android:layout_width="299dp"
-    android:layout_height="178dp"
-    android:focusable="true"
+    android:layout_height="wrap_content"
     android:background="@color/white"
-    android:backgroundTint="@color/device_card">
+    android:backgroundTint="@color/device_card"
+    android:focusable="true"
+    android:nextFocusDown="@id/card_expansion">
 
     <LinearLayout
-        android:id="@+id/card_layout"
-        android:layout_width="299dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/device_type"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/card_layout"
+            android:layout_width="299dp"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextViewCard" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/device_name"
+            <TextView
+                android:id="@+id/device_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextViewCard" />
+
+            <TextView
+                android:id="@+id/device_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextViewCard" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/card_expansion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextViewCard" />
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:focusable="true"
+            android:descendantFocusability="afterDescendants" />
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>

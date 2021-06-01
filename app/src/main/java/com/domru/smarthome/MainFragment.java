@@ -1,7 +1,5 @@
 package com.domru.smarthome;
 
-import android.util.Pair;
-
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -106,26 +104,36 @@ public class MainFragment extends Fragment{
         item.deviceInfo = "Информация об устройстве " + item.deviceName;
         list.add(item);
 
+        item = new DeviceItem();
+        item.deviceType = DeviceTypes.LIGHTBULB_STRING;
+        item.deviceName = "Лампочка 1";
+        item.deviceInfo = "Информация об устройстве " + item.deviceName;
+        list.add(item);
+
         this.adapter.setDataList(list);
     }
 
-    public final static class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnFocusChangeListener {
+    public final static class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnFocusChangeListener,
+    View.OnClickListener{
         private ArrayList<DeviceItem> dataList = new ArrayList<>();
 
         public static class ViewHolder extends RecyclerView.ViewHolder{
             private TextView deviceType;
             private TextView deviceName;
+            private LinearLayout cardExpansion;
 
             public ViewHolder(View itemView){
                 super(itemView);
                 this.deviceType = itemView.findViewById(R.id.device_type);
                 this.deviceName = itemView.findViewById(R.id.device_name);
+                this.cardExpansion = itemView.findViewById(R.id.card_expansion);
                 itemView.setTag(this);
             }
 
             public void bind(final DeviceItem data){
                 this.deviceType.setText(data.deviceType);
                 this.deviceName.setText(data.deviceName);
+                this.cardExpansion.setVisibility(data.expanded ? View.VISIBLE : View.GONE);
             }
         }
 
@@ -144,13 +152,17 @@ public class MainFragment extends Fragment{
             LayoutInflater inflater = LayoutInflater.from(context);
             View contactView = inflater.inflate(R.layout.device_card, parent, false);
             contactView.setOnFocusChangeListener(this);
+            contactView.setOnClickListener(this);
 
-            LinearLayout linLayout = (LinearLayout)contactView.findViewById(R.id.card_layout);
+            LinearLayout cardLayout = contactView.findViewById(R.id.card_layout);
+            LinearLayout cardExpansion = contactView.findViewById(R.id.card_expansion);
             View miniature = null;
             switch(viewType){
                 case (DeviceTypes.SOCKET_INT):
                     miniature = new TextView(context);
                     ((TextView) miniature).setText("Работает");
+                    Button onOffButtonSocket = CardButton(context, R.string.socket_button);
+                    cardExpansion.addView(onOffButtonSocket);
                     break;
                 case (DeviceTypes.SMOKE_DETECTOR_INT):
                     miniature = new TextView(context);
@@ -159,10 +171,20 @@ public class MainFragment extends Fragment{
                 case (DeviceTypes.LIGHTBULB_INT):
                     miniature = new TextView(context);
                     ((TextView) miniature).setText("Горит");
+                    Button onOffButtonLight = CardButton(context, R.string.bulb_button);
+                    cardExpansion.addView(onOffButtonLight);
                     break;
             }
-            linLayout.addView(miniature);
+            cardLayout.addView(miniature);
             return new ViewHolder(contactView);
+        }
+
+        private Button CardButton(Context context, int textId){
+            Button button = new Button(context);
+            button.setText(textId);
+            button.setFocusable(true);
+            button.setNextFocusUpId(R.id.device_card_root);
+            return button;
         }
 
         @Override
@@ -195,9 +217,18 @@ public class MainFragment extends Fragment{
                 ViewHolder vh = (ViewHolder)v.getTag();
                 int position = vh.getAdapterPosition();
                 DeviceItem item = this.dataList.get(position);
-                TextView deviceInfo = v.getRootView().findViewById(R.id.device_info_text);
+                TextView deviceInfo = v.getRootView().findViewById(R.id.device_info_title);
                 deviceInfo.setText(item.deviceInfo);
             }
+        }
+
+        @Override
+        public void onClick(View v){
+            ViewHolder vh = (ViewHolder)v.getTag();
+            int position = vh.getAdapterPosition();
+            DeviceItem item = this.dataList.get(position);
+            item.expanded = !item.expanded;
+            notifyItemChanged(position);
         }
     }
 }

@@ -4,4 +4,6 @@ public class DeviceItem {
     public String deviceType;
     public String deviceName;
     public String deviceInfo;
+    public boolean expanded = false;
+    public String logs;
 }
